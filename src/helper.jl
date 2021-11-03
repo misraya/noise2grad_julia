@@ -1,5 +1,29 @@
 
-function _minibatch(x, y, bs=2)
+function minibatch_x(x, bs=2)
+    data = Any[]
+
+    println("num of instances ", length(x))
+    num_of_instances = length(x)
+    d, r = divrem(num_of_instances,bs)
+    n = r > 0 ? d+1 : d
+
+    img_size = size(x[1])
+    println("img size ", img_size)
+
+    #reshape (n, ) to (img_size..., n) 4 dims
+    x = permutedims(reshape(vcat(x...), (length(x), length(x[1]))))
+    
+    for i in 1:n
+        j = min(i*bs, num_of_instances)
+        l = j - (i-1)*bs #num of instances in batch
+        batch_x = reshape(x[:,(i-1)*bs+1:j], img_size[1:end]..., l)
+        push!(data, batch_x)
+    end
+    
+    return data
+end
+
+function minibatch_x_y(x, y, bs=2)
     data = Any[]
 
     println("num of instances ", length(x))

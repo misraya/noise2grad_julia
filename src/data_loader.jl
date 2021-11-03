@@ -1,7 +1,8 @@
 include("helper.jl")
 
-struct TrainDataset
+mutable struct TrainDataset
     data 
+    length
 
     function TrainDataset(x_path, y_path, batch_size) 
         x_imgs = load_imgs(x_path, read_img_names_in_dir(x_path)[1:100])
@@ -19,8 +20,31 @@ struct TrainDataset
 
         end
 
-        data = _minibatch(x_imgs,y_imgs,batch_size) 
-        new(data)
+        data = minibatch_x_y(x_imgs,y_imgs,batch_size) 
+        new(data, size(x_imgs)[1])
+    end
+
+end
+
+
+mutable struct TestDataset
+    data 
+    length
+
+    function TestDataset(x_path, batch_size) 
+        x_imgs = load_imgs(x_path, read_img_names_in_dir(x_path))
+        
+
+        for (i,x) in enumerate(x_imgs)
+
+            x_imgs[i] = random_crop(x,128)
+
+            #random flip / other preprocessing?
+
+        end
+
+        data = minibatch_x(x_imgs,batch_size) 
+        new(data, size(x_imgs)[1])
     end
 
 end
