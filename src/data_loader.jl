@@ -1,12 +1,18 @@
 include("helper.jl")
 
-mutable struct TrainDataset
+struct TrainDataset
     data 
     length
 
-    function TrainDataset(x_path, y_path, batch_size) 
-        x_imgs = load_imgs(x_path, read_img_names_in_dir(x_path)[1:100])
-        y_imgs = load_imgs(y_path, read_img_names_in_dir(y_path)[1:100])
+    function TrainDataset(x_path, y_path, batch_size; limit=false, max_samples=100)
+
+        if limit #load only 100 instances, used for fast debugging 
+            x_imgs = load_imgs(x_path, read_img_names_in_dir(x_path)[1:max_samples])
+            y_imgs = load_imgs(y_path, read_img_names_in_dir(y_path)[1:max_samples])
+        else #load all
+            x_imgs = load_imgs(x_path, read_img_names_in_dir(x_path))
+            y_imgs = load_imgs(y_path, read_img_names_in_dir(y_path))
+        end
         
         n = size(y_imgs)[1]
         indices = randperm(n)
@@ -27,7 +33,7 @@ mutable struct TrainDataset
 end
 
 
-mutable struct TestDataset
+struct TestDataset
     data 
     length
 

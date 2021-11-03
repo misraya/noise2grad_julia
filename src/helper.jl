@@ -1,3 +1,4 @@
+using Random
 
 function minibatch_x(x, bs=2)
     data = Any[]
@@ -37,7 +38,6 @@ function minibatch_x_y(x, y, bs=2)
     #reshape (n, ) to (img_size..., n) 4 dims
     x = permutedims(reshape(vcat(x...), (length(x), length(x[1]))))
     y = permutedims(reshape(vcat(y...), (length(y), length(y[1]))))
-    println(size(x), " ", size(y))
     
     for i in 1:n
         j = min(i*bs, num_of_instances)
