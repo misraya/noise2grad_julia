@@ -1,6 +1,6 @@
 using Random
 
-function minibatch_x(x, bs=2)
+function minibatch_x(x, dtype, bs=2)
     data = Any[]
 
     println("num of instances ", length(x))
@@ -17,14 +17,14 @@ function minibatch_x(x, bs=2)
     for i in 1:n
         j = min(i*bs, num_of_instances)
         l = j - (i-1)*bs #num of instances in batch
-        batch_x = reshape(x[:,(i-1)*bs+1:j], img_size[1:end]..., l)
+        batch_x = convert(dtype,reshape(x[:,(i-1)*bs+1:j], img_size[1:end]..., l))
         push!(data, batch_x)
     end
     
     return data
 end
 
-function minibatch_x_y(x, y, bs=2)
+function minibatch_x_y(x, y, dtype, bs=2)
     data = Any[]
 
     println("num of instances ", length(x))
@@ -43,8 +43,8 @@ function minibatch_x_y(x, y, bs=2)
         j = min(i*bs, num_of_instances)
         l = j - (i-1)*bs #num of instances in batch
 
-        batch_x = reshape(x[:,(i-1)*bs+1:j], img_size[1:end]..., l)
-        batch_y = reshape(y[:,(i-1)*bs+1:j], img_size[1:end]..., l)
+        batch_x = convert(dtype,reshape(x[:,(i-1)*bs+1:j], img_size[1:end]..., l))
+        batch_y = convert(dtype,reshape(y[:,(i-1)*bs+1:j], img_size[1:end]..., l))
         #println(size(batch_x), " ", size(batch_y))
         push!(data, (batch_x,batch_y))
     end
@@ -52,17 +52,6 @@ function minibatch_x_y(x, y, bs=2)
     return data
 end
 
-function read_img_names_in_dir(dir)
-
-    files = String[]
-    for f in readdir(dir)
-        if f[end-3:end] == ".png"
-            push!(files, f)
-        end
-    end
-
-    return files    
-end
 
 function convert_to_3d(img)
     h,w = size(img)
@@ -77,8 +66,8 @@ function convert_to_3d(img)
 end
 
 
-function load_imgs(dir, files)
-    return collect(convert_to_3d(load(string(dir ,"/",f))) for f in files)
+function load_imgs(files)
+    return collect(convert_to_3d(load(f)) for f in files if split(f, ".")[end]=="png")
 end
 
 

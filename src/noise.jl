@@ -1,11 +1,11 @@
 using Noise 
 
-function additive_gaussian_noise(img, fixed::Bool; std=25)
-    if fixed == true
-        return add_gauss(img, std/100, 0.0)
+function additive_gaussian_noise(img; fixed=true, std=25)
+    if fixed 
+        return add_gauss(img, std^2/255^2, 0.0)
     else        
         noise_level = rand(1:50)
-        return add_gauss(img, noise_level/100, 0.0)
+        return add_gauss(img, noise_level^2/255^2, 0.0)
     end     
 end
 
